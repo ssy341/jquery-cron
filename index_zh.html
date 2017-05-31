@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>jquery-cron : a jQuery plugin 汉化</title>
+    <link type="text/css" href="cron/jquery-cron.css" rel="stylesheet" />
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+    <script type="text/javascript" src="cron/jquery-cron.js"></script>
+
+    <style>
+    * { margin: 0; padding: 0; }
+    body { font-family: Helvetica,Arial,sans-serif; color: #222; background-color: #ddd;line-height: 24px; }
+    ul { margin-left: 20px; }
+    ol { margin: 15px 0px 0px 20px; }
+    ol li { margin-top: 10px; }
+    h1 { margin: 30px; font-size: 2.5em; font-weight: bold; color: #000; text-align: center; }
+    h2 { border-bottom: 1px solid #999; margin: 30px 0 10px 0; font-size: 1.3em; color: #555; }
+    h3 { border-left: 20px solid #999; padding-left: 10px; line-height: 1.2; font-size: 1.1em; color: #333; margin: 30px 0 10px 0; }
+    p { line-height: 1.3;  margin-top: 20px; }
+    pre { line-height: 1.3; background-color: #369; color: #fff; padding: 10px; margin-top: 20px;}
+    a { color: #369; font-weight: bold; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .example { margin: 10px; border: 1px dashed #ccc; padding: 10px;}
+    .example-text { font-family: monospace; }
+    #content { margin: 0 auto;  padding: 20px 20px 40px 20px; width: 760px; background-color: #fff; border: 1px solid #777; border-width: 0 1px 0px 1px; }
+    #footer { margin: 0 auto; padding: 20px; padding-top: 2px; width: 760px; font-size: 0.8em; text-align: center; color: #888; }
+    </style>
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $('#example1').cron({
+            //初始化表达式
+            initial: "42 3 * * 5",
+            onChange: function() {
+                $('#example1-val').text($(this).cron("value"));
+            }
+        });
+
+        $('#example3').cron({
+            initial: "*/5 * * * *",
+            onChange: function() {
+                $('#example3-val').text($(this).cron("value"));
+            },
+            customValues: {
+                "每5分钟" : "*/5 * * * *",
+                "在周5,6每2小时" : "0 */2 * * 5,6"
+            }
+        });
+    });
+    </script>
+</head>
+<body>
+<div id="content">
+    <h1>jQuery plugin: cron</h1>
+
+    <h2 id='intro'>介绍</h2>
+    <p>
+    jquery-cron 是一个 <a href='http://jquery.com'>jQuery</a> 插件，可以方便的在前端界面生成一个quartz时间表达式
+    </p>
+
+
+    <div class='example'>
+    <div id='example1'></div>
+    <p>生成一个cron实体: <span class='example-text' id='example1-val'></span></p>
+    </div>
+
+    <div class='example'>
+    <div id='example3'></div>
+    <p>生成一个cron实体,使用自定义的时间表达式: <span class='example-text' id='example3-val'></span></p>
+    </div>
+    
+
+    <pre>
+&lt;script type="text/javascript"
+        src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"&gt;&lt;/script&gt;
+
+&lt;script type="text/javascript" src="cron/jquery-cron.js"&gt;&lt;/script&gt;
+
+&lt;link type="text/css" href="cron/jquery-cron.css" rel="stylesheet" /&gt;
+</pre>
+
+
+<pre>
+&lt;script type="text/javascript"&gt;
+$(document).ready(function() {
+    $('#selector').cron(); // apply cron with default options
+});
+&lt;/script&gt;
+&lt;!--- somewhere within &lt;body&gt; --&gt;
+&lt;div id='selector'&gt;&lt;/div&gt;
+</pre>
+
+<div id='footer'>
+
+
+Copyright &copy; 2010-2013 <a href='http://github.com/shawnchin'>Shawn Chin</a>
+(Licensed under the <a href='http://www.opensource.org/licenses/mit-license.php'>MIT License</a>)
+</div>
+<a href="http://github.com/shawnchin/jquery-cron"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub" /></a>
+
+</body>
+</html>
