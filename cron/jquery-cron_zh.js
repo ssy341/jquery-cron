@@ -46,42 +46,49 @@
             itemWidth : 30,
             columns   : 4,
             rows      : undefined,
-            title     : "Minutes Past the Hour"
+            title     : "分钟"
         },
         timeHourOpts : {
             minWidth  : 100, // only applies if columns and itemWidth not set
             itemWidth : 20,
             columns   : 2,
             rows      : undefined,
-            title     : "Time: Hour"
+            title     : "小时"
         },
         domOpts : {
             minWidth  : 100, // only applies if columns and itemWidth not set
             itemWidth : 30,
             columns   : undefined,
             rows      : 10,
-            title     : "Day of Month"
+            title     : "月12"
         },
         monthOpts : {
             minWidth  : 100, // only applies if columns and itemWidth not set
             itemWidth : 100,
             columns   : 2,
             rows      : undefined,
-            title     : undefined
+            title     : "月"
         },
         dowOpts : {
             minWidth  : 100, // only applies if columns and itemWidth not set
             itemWidth : undefined,
             columns   : undefined,
             rows      : undefined,
-            title     : undefined
+            title     : "星期"
         },
         timeMinuteOpts : {
             minWidth  : 100, // only applies if columns and itemWidth not set
             itemWidth : 20,
             columns   : 4,
             rows      : undefined,
-            title     : "Time: Minute"
+            title     : "分钟"
+        },
+        timeSecondOpts : {
+            minWidth  : 100, // only applies if columns and itemWidth not set
+            itemWidth : 20,
+            columns   : 4,
+            rows      : undefined,
+            title     : "秒"
         },
         effectOpts : {
             openSpeed      : 400,
@@ -112,38 +119,42 @@
         str_opt_hid += "<option value='"+i+"'>" + j + i + "</option>\n";
     }
 
+    // options for second in a minutes
+    var str_opt_sim = "";
+    for (var i = 0; i < 60; i++) {
+        var j = (i < 10)? "0":"";
+        str_opt_sim += "<option value='"+i+"'>" + j +  i + "</option>\n";
+    }
+
     // options for days of month
     var str_opt_dom = "";
     for (var i = 1; i < 32; i++) {
-        if (i == 1 || i == 21 || i == 31) { var suffix = "st"; }
-        else if (i == 2 || i == 22) { var suffix = "nd"; }
-        else if (i == 3 || i == 23) { var suffix = "rd"; }
-        else { var suffix = "th"; }
-        str_opt_dom += "<option value='"+i+"'>" + i + suffix + "</option>\n";
+        str_opt_dom += "<option value='"+i+"'>" + i + "</option>\n";
     }
 
     // options for months
     var str_opt_month = "";
-    var months = ["January", "February", "March", "April",
-                  "May", "June", "July", "August",
-                  "September", "October", "November", "December"];
+    var months = ["一月", "二月", "三月", "四月",
+        "五月", "六月", "七月", "八月",
+        "九月", "十月", "十一月", "十二月"];
     for (var i = 0; i < months.length; i++) {
         str_opt_month += "<option value='"+(i+1)+"'>" + months[i] + "</option>\n";
     }
 
     // options for day of week
     var str_opt_dow = "";
-    var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday",
-                "Friday", "Saturday"];
+    var days = ["星期天", "星期一", "星期二", "星期三", "星期四",
+        "星期五", "星期六"];
     for (var i = 0; i < days.length; i++) {
         str_opt_dow += "<option value='"+i+"'>" + days[i] + "</option>\n";
     }
 
     // options for period
     var str_opt_period = "";
-    var periods = ["minute", "hour", "day", "week", "month", "year"];
+    var periods = ["second", "minute", "hour", "day", "week", "month", "year"];
+    var periods_zh = ["秒", "分钟", "小时", "天", "周", "月", "年"];
     for (var i = 0; i < periods.length; i++) {
-        str_opt_period += "<option value='"+periods[i]+"'>" + periods[i] + "</option>\n";
+        str_opt_period += "<option value='" + periods[i] + "'>" + periods_zh[i] + "</option>\n";
     }
 
     // display matrix
@@ -186,7 +197,7 @@
         // check format of initial cron value
         var valid_cron = /^((\d{1,2}|\*)\s){4}(\d{1,2}|\*)$/
         if (typeof cron_str != "string" || !valid_cron.test(cron_str)) {
-            $.error("cron: invalid initial value");
+            $.error("无效的初始化值");
             return undefined;
         }
 
@@ -210,6 +221,7 @@
         }
 
         // unknown combination
+        //不支持的有效表达式，不能格式化
         $.error("cron: valid but unsupported cron format. sorry.");
         return undefined;
     }
@@ -223,7 +235,7 @@
             for (key in o.customValues) {
                 if (combinations.hasOwnProperty(key)) {
                     $.error("cron: reserved keyword '" + key +
-                            "' should not be used as customValues key.");
+                        "' should not be used as customValues key.");
                     return true;
                 }
             }
@@ -234,9 +246,12 @@
 
     function getCurrentValue(c) {
         var b = c.data("block");
-        var min = hour = day = month = dow = "*";
+        var second = min = hour = day = month = dow = "*";
         var selectedPeriod = b["period"].find("select").val();
         switch (selectedPeriod) {
+            case "second":
+                break;
+
             case "minute":
                 break;
 
@@ -272,7 +287,7 @@
                 // we assume this only happens when customValues is set
                 return selectedPeriod;
         }
-        return [min, hour, day, month, dow].join(" ");
+        return [second,min, hour, day, month, dow].join(" ");
     }
 
     // -------------------  PUBLIC METHODS -----------------
@@ -290,7 +305,8 @@
                 monthOpts      : $.extend({}, defaults.monthOpts, eo, options.monthOpts),
                 dowOpts        : $.extend({}, defaults.dowOpts, eo, options.dowOpts),
                 timeHourOpts   : $.extend({}, defaults.timeHourOpts, eo, options.timeHourOpts),
-                timeMinuteOpts : $.extend({}, defaults.timeMinuteOpts, eo, options.timeMinuteOpts)
+                timeMinuteOpts : $.extend({}, defaults.timeMinuteOpts, eo, options.timeMinuteOpts),
+                timeSecondOpts : $.extend({}, defaults.timeSecondOpts, eo, options.timeSecondOpts)
             });
 
             // error checking
@@ -306,37 +322,42 @@
             }
 
             block["period"] = $("<span class='cron-period'>"
-                    + "Every <select name='cron-period'>" + custom_periods
-                    + str_opt_period + "</select> </span>")
+                + "每 <select name='cron-period'>" + custom_periods
+                + str_opt_period + "</select> </span>")
                 .appendTo(this)
                 .data("root", this);
 
             var select = block["period"].find("select");
             select.bind("change.cron", event_handlers.periodChanged)
-                  .data("root", this);
+                .data("root", this);
             if (o.useGentleSelect) select.gentleSelect(eo);
 
-            block["dom"] = $("<span class='cron-block cron-block-dom'>"
-                    + " on the <select name='cron-dom'>" + str_opt_dom
-                    + "</select> </span>")
-                .appendTo(this)
-                .data("root", this);
 
-            select = block["dom"].find("select").data("root", this);
             if (o.useGentleSelect) select.gentleSelect(o.domOpts);
 
             block["month"] = $("<span class='cron-block cron-block-month'>"
-                    + " of <select name='cron-month'>" + str_opt_month
-                    + "</select> </span>")
+                + " 在 <select name='cron-month'>" + str_opt_month +"</select> " +
+                "</span>")
                 .appendTo(this)
                 .data("root", this);
 
             select = block["month"].find("select").data("root", this);
+
+
+            block["dom"] = $("<span class='cron-block cron-block-dom'>"
+                + " 第 <select name='cron-dom'>" + str_opt_dom
+                + "</select> 天</span>")
+                .appendTo(this)
+                .data("root", this);
+
+            select = block["dom"].find("select").data("root", this);
+
+
             if (o.useGentleSelect) select.gentleSelect(o.monthOpts);
 
             block["mins"] = $("<span class='cron-block cron-block-mins'>"
-                    + " at <select name='cron-mins'>" + str_opt_mih
-                    + "</select> minutes past the hour </span>")
+                + " 在第 <select name='cron-mins'>" + str_opt_mih
+                + "</select> 分钟 </span>")
                 .appendTo(this)
                 .data("root", this);
 
@@ -344,18 +365,19 @@
             if (o.useGentleSelect) select.gentleSelect(o.minuteOpts);
 
             block["dow"] = $("<span class='cron-block cron-block-dow'>"
-                    + " on <select name='cron-dow'>" + str_opt_dow
-                    + "</select> </span>")
+                + " 在 <select name='cron-dow'>" + str_opt_dow
+                + "</select> </span>")
                 .appendTo(this)
                 .data("root", this);
 
             select = block["dow"].find("select").data("root", this);
             if (o.useGentleSelect) select.gentleSelect(o.dowOpts);
 
-            block["time"] = $("<span class='cron-block cron-block-time'>"
-                    + " at <select name='cron-time-hour' class='cron-time-hour'>" + str_opt_hid
-                    + "</select>:<select name='cron-time-min' class='cron-time-min'>" + str_opt_mih
-                    + " </span>")
+            block["time"] = $("<span class='cron-block cron-block-time'>在 " +
+                "<select name='cron-time-hour' class='cron-time-hour'>" + str_opt_hid + "</select>时" +
+                "<select name='cron-time-min' class='cron-time-min'>" + str_opt_mih + "</select>分" +
+                " <select name='cron-time-sec' class='cron-time-sec'>" + str_opt_sim + "</select>秒" +
+                "</span>")
                 .appendTo(this)
                 .data("root", this);
 
@@ -363,16 +385,18 @@
             if (o.useGentleSelect) select.gentleSelect(o.timeHourOpts);
             select = block["time"].find("select.cron-time-min").data("root", this);
             if (o.useGentleSelect) select.gentleSelect(o.timeMinuteOpts);
+            select = block["time"].find("select.cron-time-sec").data("root", this);
+            if (o.useGentleSelect) select.gentleSelect(o.timeSecondOpts);
 
             block["controls"] = $("<span class='cron-controls'>&laquo; save "
-                    + "<span class='cron-button cron-button-save'></span>"
-                    + " </span>")
+                + "<span class='cron-button cron-button-save'></span>"
+                + " </span>")
                 .appendTo(this)
                 .data("root", this)
                 .find("span.cron-button-save")
-                    .bind("click.cron", event_handlers.saveClicked)
-                    .data("root", this)
-                    .end();
+                .bind("click.cron", event_handlers.saveClicked)
+                .data("root", this)
+                .end();
 
             this.find("select").bind("change.cron-callback", event_handlers.somethingChanged);
             this.data("options", o).data("block", block); // store options and block pointer
@@ -389,9 +413,9 @@
             var block = this.data("block");
             var useGentleSelect = o.useGentleSelect;
             var t = getCronType(cron_str, o);
-            
+
             if (!defined(t)) { return false; }
-            
+
             if (defined(o.customValues) && o.customValues.hasOwnProperty(t)) {
                 t = o.customValues[t];
             } else {
@@ -420,7 +444,7 @@
                     }
                 }
             }
-            
+
             // trigger change event
             var bp = block["period"].find("select").val(t);
             if (useGentleSelect) bp.gentleSelect("update");
